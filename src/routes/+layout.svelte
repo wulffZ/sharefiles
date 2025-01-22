@@ -13,7 +13,7 @@
             if (window.location.pathname === '/login' || window.location.pathname === '/register') {
                 goto('/');
             }
-        } else {
+        } else if (window.location.pathname !== '/register') {
             goto('/login')
         }
     });

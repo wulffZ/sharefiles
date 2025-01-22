@@ -1,10 +1,36 @@
 <script lang="ts">
-    import {Label, Input, Textarea, MultiSelect, Helper, Fileupload, Button, Toast} from 'flowbite-svelte';
+    import {
+        Label,
+        Input,
+        Textarea,
+        MultiSelect,
+        Helper,
+        Fileupload,
+        Button,
+        Hr,
+        Progressbar
+    } from 'flowbite-svelte';
     import {ExclamationCircleSolid} from 'flowbite-svelte-icons';
-    import {enhance} from '$app/forms';
     import {Tags} from "$lib/enums/tags";
+    import {pb} from "$lib/pocketbase";
+    import Error from "../../components/Error.svelte";
+    import {goto} from "$app/navigation";
+    import {env} from "$env/dynamic/public";
 
-    let { form } = $props();
+    let progress = $state(0);
+    let file = $state(null);
+    let selectedTags = $state([]);
+
+    let form = {
+        name: '',
+        description: '',
+        error: ''
+    }
+
+    const tags = Object.values(Tags).map((tag) => ({
+        value: tag,
+        name: tag,
+    }));
 
     let textAreaProps = {
         id: 'description',
@@ -14,11 +40,49 @@
         placeholder: 'Additional information...'
     };
 
-    let selectedTags = $state([]);
-    const tags = Object.values(Tags).map((tag) => ({
-        value: tag,
-        name: tag,
-    }));
+    async function create() {
+        const formData = new FormData();
+        formData.append('name', form.name);
+        formData.append('description', form.description);
+        formData.append('tags', selectedTags.toString());
+        formData.append('file', file[0]);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', env.PUBLIC_POCKETBASE_URL + '/api/collections/posts/records', true);
+        xhr.setRequestHeader('Authorization', 'Bearer ' + pb.authStore.token);
+
+        try {
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                    progress = (event.loaded / event.total) * 100;
+                }
+            };
+
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    clear();
+                } else {
+                    form.error = xhr.responseText
+                }
+            };
+
+            xhr.onerror = () => {
+                form.error = xhr.responseText
+            };
+
+            xhr.send(formData);
+        } catch (err: any) {
+            form.error = err?.response.message || console.log("An unexpected error occurred. Please check the console and report.");
+        }
+    }
+
+    async function clear() {
+        selectedTags = []
+        file = null
+        progress = 0;
+
+        await goto('/');
+    }
 </script>
 
 <svelte:head>
@@ -27,17 +91,15 @@
 
 <form
         class="max-w-xl mx-auto mt-6"
-        enctype="multipart/form-data"
-        method="post"
-        use:enhance
-    >
+        onsubmit={create}
+>
     <p class="tracking-tight leading-none text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">New upload</p>
 
     <div class="mt-2">
         <Label for="default-input" class="block mb-2">Name & description</Label>
-        <Input id="default-input" placeholder="Name" name="name" required/>
+        <Input id="default-input" placeholder="Name" name="name" bind:value={form.name} required/>
     </div>
-    <Textarea {...textAreaProps} class="mt-2" name="description" required/>
+    <Textarea {...textAreaProps} class="mt-2" name="description" bind:value={form.description} required/>
 
     <div class="mt-2">
         <div class="flex flex-row justify-between">
@@ -51,27 +113,25 @@
 
     <div class="mt-2">
         <Label class="py-2" for="file">Large file input</Label>
-        <Fileupload id="file" name="file" size="lg" required/>
+        <Fileupload id="file" name="file" size="lg" bind:files={file} required/>
     </div>
 
-    <div class="flex flex-row justify-end mt-4">
-        <Button
-                type="submit"
-                formaction="?/create"
-                >Submit
-        </Button>
-    </div>
-
-    {#if form?.errors}
-        <div class="error">
-            <Toast position="bottom-right">
-                <svelte:fragment slot="icon">
-                    <ExclamationCircleSolid class="w-5 h-5" />
-                    <span class="sr-only">Warning icon</span>
-                </svelte:fragment>
-                <p>{ form?.errors.name }</p>
-                <p>{ form?.errors.description }</p>
-            </Toast>
+    {#if progress > 0}
+        <div class="mt-4">
+            <Progressbar progress={progress} color="primary"/>
+            <p class="mt-2 font-medium text-primary-600 hover:underline dark:text-primary-500">{Math.round(progress)}%</p>
         </div>
     {/if}
+
+    <Hr classHr="w-96 h-1 mx-auto my-4 rounded md:my-8"/>
+
+    <div class="flex flex-row justify-end mt-4">
+        {#if progress > 0}
+            <Button disabled type="submit">Uploading...</Button>
+        {:else}
+            <Button type="submit">Submit</Button>
+        {/if}
+    </div>
+
+    <Error error={form.error}/>
 </form>
