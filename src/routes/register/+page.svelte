@@ -1,8 +1,6 @@
 <script lang="ts">
 
-    import {Button, Hr, Input, Label, Toast} from "flowbite-svelte";
-    import {ExclamationCircleSolid} from "flowbite-svelte-icons";
-    import {enhance} from '$app/forms';
+    import {Button, Hr, Input, Label} from "flowbite-svelte";
     import {pb} from "$lib/pocketbase";
     import {goto} from "$app/navigation";
     import Error from "../../components/Error.svelte";
@@ -50,8 +48,10 @@
 
     <div class="mt-4">
         <Label for="default-input" class="block mb-2">Password</Label>
-        <Input id="default-input" placeholder="Password" bind:value={form.password} name="password" type="password" required/>
-        <Input id="default-input" class="mt-2" placeholder="Confirm password" bind:value={form.passwordConfirm} name="passwordConfirm" type="password"
+        <Input id="default-input" placeholder="Password" bind:value={form.password} name="password" type="password"
+               required/>
+        <Input id="default-input" class="mt-2" placeholder="Confirm password" bind:value={form.passwordConfirm}
+               name="passwordConfirm" type="password"
                required/>
     </div>
 

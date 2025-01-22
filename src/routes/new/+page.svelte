@@ -10,7 +10,6 @@
         Hr,
         Progressbar
     } from 'flowbite-svelte';
-    import {ExclamationCircleSolid} from 'flowbite-svelte-icons';
     import {Tags} from "$lib/enums/tags";
     import {pb} from "$lib/pocketbase";
     import Error from "../../components/Error.svelte";
@@ -22,7 +21,7 @@
     let selectedTags = $state([]);
 
     let form = {
-        name: '',
+        title: '',
         description: '',
         error: ''
     }
@@ -42,9 +41,10 @@
 
     async function create() {
         const formData = new FormData();
-        formData.append('name', form.name);
+
+        formData.append('title', form.title);
         formData.append('description', form.description);
-        formData.append('tags', selectedTags.toString());
+        formData.append('tags', JSON.stringify(selectedTags));
         formData.append('file', file[0]);
 
         const xhr = new XMLHttpRequest();
@@ -96,8 +96,8 @@
     <p class="tracking-tight leading-none text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">New upload</p>
 
     <div class="mt-2">
-        <Label for="default-input" class="block mb-2">Name & description</Label>
-        <Input id="default-input" placeholder="Name" name="name" bind:value={form.name} required/>
+        <Label for="default-input" class="block mb-2">Title and description</Label>
+        <Input id="default-input" placeholder="Title" name="title" bind:value={form.title} required/>
     </div>
     <Textarea {...textAreaProps} class="mt-2" name="description" bind:value={form.description} required/>
 

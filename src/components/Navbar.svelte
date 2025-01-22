@@ -18,7 +18,7 @@
         <Spinner class="w-20 h-20" color="primary" />
     </div>
 {:else if $currentUser}
-    <Navbar rounded color="form">
+    <Navbar color="form" class="xl:rounded-lg xl:mt-4">
         <NavBrand href="/">
             <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">sharefiles</span>
         </NavBrand>
@@ -32,7 +32,7 @@
         </NavUl>
     </Navbar>
 {:else}
-    <Navbar rounded color="form" class="max-w-2xl mx-auto">
+    <Navbar color="form" class="max-w-2xl mx-auto xl:rounded-lg xl:mt-4">
         <NavBrand>
             <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">sharefiles</span>
         </NavBrand>

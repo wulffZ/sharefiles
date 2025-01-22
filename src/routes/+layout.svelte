@@ -19,7 +19,7 @@
     });
 </script>
 
-<div class="min-h-screen max-w-7xl mx-auto mt-4" {...props}>
+<div class="min-h-screen max-w-7xl mx-auto" {...props}>
     <Navbar/>
 
     {@render children()}
