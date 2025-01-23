@@ -2,7 +2,7 @@
     import "../app.scss";
     import Navbar from "../components/Navbar.svelte";
     import {onMount} from "svelte";
-    import {pb} from "$lib/pocketbase";
+    import {pb} from "$lib/stores/pocketbase";
     import {goto} from "$app/navigation";
 
     let {children, ...props} = $props();

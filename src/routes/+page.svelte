@@ -1,10 +1,50 @@
 <script lang="ts">
+    import { currentUser, pb } from "$lib/stores/pocketbase";
+    import Post from "../components/Post.svelte";
+    import { Heading, P, Spinner } from "flowbite-svelte";
+    import { searchQuery } from "$lib/stores/search";
+    import { onMount, onDestroy } from "svelte";
 
-    import {pb} from "$lib/pocketbase";
-    import {Badge, Card} from "flowbite-svelte";
-    import {ArrowRightOutline} from "flowbite-svelte-icons";
+    let debouncedTimeout: number;
+    let posts = null;
+    let loading = false;
+    let unsubscribeSearchQuery: () => void;
 
-    'flowbite-svelte-icons'
+    async function getPosts(query: string) {
+        try {
+            loading = true;
+
+            if (query) {
+                posts = await pb.collection('posts').getList(1, 50, {
+                    filter: `(title?~"${query}" || description?~"${query}" || tags?~"${query}")`
+                });
+            } else {
+                posts = await pb.collection('posts').getList();
+            }
+        } catch (error) {
+            console.error('Search error:', error);
+            posts = { items: [] };
+        } finally {
+            loading = false;
+        }
+    }
+
+    onMount(() => {
+        getPosts(''); // Initial load
+
+        unsubscribeSearchQuery = searchQuery.subscribe((query) => {
+            if (debouncedTimeout) clearTimeout(debouncedTimeout);
+
+            debouncedTimeout = setTimeout(() => {
+                getPosts(query);
+            }, 500);
+        });
+    });
+
+    onDestroy(() => {
+        if (debouncedTimeout) clearTimeout(debouncedTimeout);
+        if (unsubscribeSearchQuery) unsubscribeSearchQuery();
+    });
 </script>
 
 <svelte:head>
@@ -13,30 +53,24 @@
 
 <main class="flex justify-center flex-col max-w-5xl mx-auto mt-4">
     <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 m-2 gap-6">
-        {#await pb.collection('posts').getList() then posts}
+        {#if loading}
+            <!-- Show spinner while loading -->
+            <div class="flex justify-center items-center col-span-full">
+                <Spinner size="w-10 h-10 m-10 ease-in" />
+            </div>
+        {:else if posts && posts.items.length > 0}
+            <!-- Show posts if results are found -->
             {#each posts.items as post}
-                <Card>
-                    <div class="flex flex-row">
-                        <div class="w-4/5">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{post.title}</h5>
-                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">{post.description}</p>
-                            {#if post.tags}
-                                <div class="flex flex-wrap gap-2">
-                                    {#each post.tags as tag}
-                                        <Badge>{tag}</Badge>
-                                    {/each}
-                                </div>
-                            {/if}
-                        </div>
-                        <div class="w-1/5">
-                            <a href="/">
-                                <ArrowRightOutline class="w-10 h-10 ms-2 text-orange-500"/>
-                            </a>
-                        </div>
-                    </div>
-                </Card>
+                <Post {post} />
             {/each}
-        {/await}
+        {:else}
+            <!-- Show no results message if posts are empty -->
+            <div class="flex flex-col">
+                <Heading tag="h2" customSize="text-4xl font-extrabold">
+                    No results <span class="text-orange-500">:(</span>
+                </Heading>
+                <P class="my-4 text-gray-500">Try searching for keywords in the title, description, or tags.</P>
+            </div>
+        {/if}
     </ul>
 </main>
-

@@ -11,7 +11,7 @@
         Progressbar
     } from 'flowbite-svelte';
     import {Tags} from "$lib/enums/tags";
-    import {pb} from "$lib/pocketbase";
+    import {pb} from "$lib/stores/pocketbase";
     import Error from "../../components/Error.svelte";
     import {goto} from "$app/navigation";
     import {env} from "$env/dynamic/public";

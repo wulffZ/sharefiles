@@ -2,7 +2,7 @@
 
     import {Button, Input, Label, Toast, Hr} from "flowbite-svelte";
     import {goto} from "$app/navigation";
-    import {pb} from "$lib/pocketbase";
+    import {pb} from "$lib/stores/pocketbase";
     import Error from "../../components/Error.svelte";
 
     let form = {
@@ -25,7 +25,7 @@
 </script>
 
 <svelte:head>
-    <title>Home</title>
+    <title>Login</title>
 </svelte:head>
 
 <form
