@@ -1,9 +1,26 @@
 <script>
-import {ArrowRightOutline} from "flowbite-svelte-icons";
-import {Badge, Card} from "flowbite-svelte";
+    import { ArrowRightOutline } from "flowbite-svelte-icons";
+    import { Badge, Card } from "flowbite-svelte";
+    import PostDetails from './PostDetails.svelte';
+    import { page } from "$app/stores";
+    import { pushState } from "$app/navigation";
 
-let { post } = $props();
+    let { post } = $props();
+    let isModalOpen = $state(false);
 
+    function openModal() {
+        pushState(`?id=${post.id}`, {});
+        isModalOpen = true;
+    }
+
+    $effect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const postId = searchParams.get("id");
+
+        if (postId === post.id.toString()) {
+            isModalOpen = true;
+        }
+    });
 </script>
 
 <Card>
@@ -20,9 +37,11 @@ let { post } = $props();
             {/if}
         </div>
         <div class="w-1/5">
-            <a href="/">
+            <button on:click={openModal}>
                 <ArrowRightOutline class="w-8 h-8 mt-1 text-orange-500"/>
-            </a>
+            </button>
         </div>
     </div>
 </Card>
+
+<PostDetails {post} bind:isOpen={isModalOpen} />

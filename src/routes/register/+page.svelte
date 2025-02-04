@@ -39,8 +39,7 @@
         sharefiles!</p>
 
     <div class="mt-2">
-        <Label for="default-input" class="block mb-2">Na
-            ..........me and email</Label>
+        <Label for="default-input" class="block mb-2">Name and email</Label>
         <Input id="default-input" placeholder="Name" bind:value={form.username} name="name" required/>
         <Input id="default-input" placeholder="Email" bind:value={form.email} name="email" class="mt-2" required/>
     </div>
