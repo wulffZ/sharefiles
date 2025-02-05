@@ -30,8 +30,6 @@
     }
 
     onMount(() => {
-        getPosts(''); // Initial load
-
         unsubscribeSearchQuery = searchQuery.subscribe((query) => {
             if (debouncedTimeout) clearTimeout(debouncedTimeout);
 
@@ -39,6 +37,10 @@
                 getPosts(query);
             }, 500);
         });
+
+        if (!searchQuery) {
+            getPosts('');
+        }
     });
 
     onDestroy(() => {

@@ -2,7 +2,6 @@
     import { Modal, Button } from 'flowbite-svelte';
     import { fade, fly } from 'svelte/transition';
     import { pushState } from "$app/navigation";
-    import { page } from "$app/stores";
 
     let {
         post,

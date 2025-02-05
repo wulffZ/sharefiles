@@ -1,11 +1,10 @@
 <script>
-    import { ArrowRightOutline } from "flowbite-svelte-icons";
-    import { Badge, Card } from "flowbite-svelte";
+    import {ArrowRightOutline} from "flowbite-svelte-icons";
+    import {Badge, Card} from "flowbite-svelte";
     import PostDetails from './PostDetails.svelte';
-    import { page } from "$app/stores";
-    import { pushState } from "$app/navigation";
+    import {pushState} from "$app/navigation";
 
-    let { post } = $props();
+    let {post} = $props();
     let isModalOpen = $state(false);
 
     function openModal() {
@@ -44,4 +43,4 @@
     </div>
 </Card>
 
-<PostDetails {post} bind:isOpen={isModalOpen} />
+<PostDetails {post} bind:isOpen={isModalOpen}/>
