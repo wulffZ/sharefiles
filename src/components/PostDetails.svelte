@@ -1,16 +1,22 @@
 <script>
-    import { Modal, Button } from 'flowbite-svelte';
-    import { fade, fly } from 'svelte/transition';
-    import { pushState } from "$app/navigation";
+    import {Modal, Button, Badge} from 'flowbite-svelte';
+    import {pushState} from "$app/navigation";
+    import {DownloadOutline} from "flowbite-svelte-icons";
+    import {env} from "$env/dynamic/public";
 
     let {
         post,
-        isOpen = $bindable()
+        isOpen = $bindable(),
+        fileUrl = `${env.PUBLIC_POCKETBASE_URL}/api/files/${post.collectionId}/${post.id}/${post.file}`
     } = $props();
 
     function closeModal() {
         isOpen = false;
         pushState(window.location.pathname, {});
+    }
+
+    function download() {
+        window.open(fileUrl, '_blank');
     }
 </script>
 
@@ -20,18 +26,19 @@
         autoclose
         outsideclose
         on:close={closeModal}
-        transition={fly}
-        transitionConfig={{ duration: 300, y: 50 }}
 >
-    <div class="space-y-4"
-         in:fade={{ duration: 300 }}
-         out:fade={{ duration: 300 }}
-    >
+    <div class="space-y-4">
         <p>{post.description}</p>
-
+        <div class="flex flex-wrap gap-2">
+            {#each post.tags as tag}
+                <Badge>{tag}</Badge>
+            {/each}
+        </div>
     </div>
 
     <svelte:fragment slot="footer">
-        <Button on:click={closeModal}>Close</Button>
+        <Button on:click={download}>
+           Download <DownloadOutline class="w-6 h-6 ml-2"/>
+        </Button>
     </svelte:fragment>
 </Modal>
