@@ -30,6 +30,8 @@
     }
 
     onMount(() => {
+        loading = true;
+
         unsubscribeSearchQuery = searchQuery.subscribe((query) => {
             if (debouncedTimeout) clearTimeout(debouncedTimeout);
 
@@ -56,17 +58,14 @@
 <main class="flex justify-center flex-col max-w-5xl mx-auto mt-4">
     <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 m-2 gap-6">
         {#if loading}
-            <!-- Show spinner while loading -->
             <div class="flex justify-center items-center col-span-full">
                 <Spinner size="w-10 h-10 m-10 ease-in" />
             </div>
         {:else if posts && posts.items.length > 0}
-            <!-- Show posts if results are found -->
             {#each posts.items as post}
                 <Post {post} />
             {/each}
         {:else}
-            <!-- Show no results message if posts are empty -->
             <div class="flex flex-col">
                 <Heading tag="h2" customSize="text-4xl font-extrabold">
                     No results <span class="text-orange-500">:(</span>
