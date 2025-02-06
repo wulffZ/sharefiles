@@ -5,24 +5,45 @@
     import {goto} from "$app/navigation";
     import Error from "../../components/Error.svelte";
 
+    let invite = null;
+    let inviteCode = $state('');
+    let error = $state('');
+
     let form = {
         email: '',
-        username: '',
+        name: '',
         password: '',
         passwordConfirm: '',
-        error: ''
     }
 
     async function register() {
-        form.error = ''; // Clear previous error.
+        try {
+            invite = await pb.collection('invites').getFirstListItem(`code="${inviteCode}"`);
+        } catch (err: any) {
+            return error = 'Invalid invite code.'
+        }
+
+        if (invite.expired === true) {
+            return error = 'Invite code has expired.'
+        }
 
         try {
-            console.log(form)
+            // Register
             await pb.collection('users').create(form);
 
-            await goto('/');
+            // Log in
+            await pb.collection('users').authWithPassword(form.email, form.password);
+
+            const updatedInvite = {
+                code: invite.code,
+                expired: true
+            }
+
+            await pb.collection('invites').update(invite.id, updatedInvite);
+
+            return await goto('/');
         } catch (err: any) {
-            form.error = err?.response || 'An unexpected error occurred. Please check the console and report.';
+            return error = err?.response;
         }
     }
 </script>
@@ -40,18 +61,21 @@
 
     <div class="mt-2">
         <Label for="default-input" class="block mb-2">Name and email</Label>
-        <Input id="default-input" placeholder="Name" bind:value={form.username} name="name" required/>
+        <Input id="default-input" placeholder="Name" bind:value={form.name} name="name" required/>
         <Input id="default-input" placeholder="Email" bind:value={form.email} name="email" class="mt-2" required/>
     </div>
 
     <Hr classHr="w-96 h-1 mx-auto my-4 rounded md:my-8"/>
 
-    <div class="mt-4">
-        <Label for="default-input" class="block mb-2">Password</Label>
+    <div class="mt-2">
+        <Label for="default-input" class="block mb-2">Password and invite code</Label>
         <Input id="default-input" placeholder="Password" bind:value={form.password} name="password" type="password"
                required/>
         <Input id="default-input" class="mt-2" placeholder="Confirm password" bind:value={form.passwordConfirm}
                name="passwordConfirm" type="password"
+               required/>
+        <Input id="default-input" class="mt-2" placeholder="Invite code" bind:value={inviteCode} name="invite"
+               type="text"
                required/>
     </div>
 
@@ -66,6 +90,8 @@
         </Button>
     </div>
 
-    <Error error={form.error}/>
+    {#if error}
+        <Error error={error}/>
+    {/if}
 </form>
 

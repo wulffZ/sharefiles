@@ -29,6 +29,7 @@
             <NavUl>
                 <NavLi href="/">Dash</NavLi>
                 <NavLi href="/new">New</NavLi>
+                <NavLi href="/invite">Invite</NavLi>
 
                 <!-- Colour switch -->
                 <DarkMode class="p-0" size="lg"/>

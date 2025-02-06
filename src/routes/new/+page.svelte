@@ -19,11 +19,11 @@
     let progress = $state(0);
     let file = $state(null);
     let selectedTags = $state([]);
+    let error = $state('');
 
     let form = {
         title: '',
         description: '',
-        error: ''
     }
 
     const tags = Object.values(Tags).map((tag) => ({
@@ -62,17 +62,17 @@
                 if (xhr.status === 200) {
                     clear();
                 } else {
-                    form.error = xhr.responseText
+                    error = xhr.responseText
                 }
             };
 
             xhr.onerror = () => {
-                form.error = xhr.responseText
+                error = xhr.responseText
             };
 
             xhr.send(formData);
         } catch (err: any) {
-            form.error = err?.response.message || console.log("An unexpected error occurred. Please check the console and report.");
+            error = err?.response.message || console.log("An unexpected error occurred. Please check the console and report.");
         }
     }
 
@@ -133,5 +133,7 @@
         {/if}
     </div>
 
-    <Error error={form.error}/>
+    {#if error}
+        <Error error={error}/>
+    {/if}
 </form>
