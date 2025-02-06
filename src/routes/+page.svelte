@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { currentUser, pb } from "$lib/stores/pocketbase";
+    import {pb} from "$lib/stores/pocketbase";
     import Post from "../components/Post.svelte";
-    import { Heading, P, Spinner } from "flowbite-svelte";
-    import { searchQuery } from "$lib/stores/search";
-    import { onMount, onDestroy } from "svelte";
+    import {Heading, P, Spinner} from "flowbite-svelte";
+    import {searchQuery} from "$lib/stores/search";
+    import {onMount, onDestroy} from "svelte";
 
     let debouncedTimeout: number;
     let posts = null;
@@ -23,7 +23,7 @@
             }
         } catch (error) {
             console.error('Search error:', error);
-            posts = { items: [] };
+            posts = {items: []};
         } finally {
             loading = false;
         }
@@ -59,11 +59,11 @@
     <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 m-2 gap-6">
         {#if loading}
             <div class="flex justify-center items-center col-span-full">
-                <Spinner size="w-10 h-10 m-10 ease-in" />
+                <Spinner size="w-10 h-10 m-10 ease-in"/>
             </div>
         {:else if posts && posts.items.length > 0}
             {#each posts.items as post}
-                <Post {post} />
+                <Post {post}/>
             {/each}
         {:else}
             <div class="flex flex-col">

@@ -38,7 +38,8 @@
 
     <svelte:fragment slot="footer">
         <Button on:click={download}>
-           Download <DownloadOutline class="w-6 h-6 ml-2"/>
+            Download
+            <DownloadOutline class="w-6 h-6 ml-2"/>
         </Button>
     </svelte:fragment>
 </Modal>

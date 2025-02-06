@@ -3,23 +3,24 @@
     import {Badge, Card} from "flowbite-svelte";
     import PostDetails from './PostDetails.svelte';
     import {pushState} from "$app/navigation";
+    import {onMount} from "svelte";
+    import {page} from "$app/state";
 
     let {post} = $props();
     let isModalOpen = $state(false);
+
+    onMount(() => {
+        const currentPostId = page.url.searchParams.get("id");
+
+        if (currentPostId === post.id) {
+            openModal();
+        }
+    })
 
     function openModal() {
         pushState(`?id=${post.id}`, {});
         isModalOpen = true;
     }
-
-    $effect(() => {
-        const searchParams = new URLSearchParams(window.location.search);
-        const postId = searchParams.get("id");
-
-        if (postId === post.id.toString()) {
-            isModalOpen = true;
-        }
-    });
 </script>
 
 <Card>

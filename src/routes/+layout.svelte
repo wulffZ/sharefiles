@@ -8,11 +8,10 @@
     let {children, ...props} = $props();
 
     onMount(() => {
-        const currentPath = window.location.pathname;
-        const searchParams = window.location.search;
+        const currentPath: string = window.location.pathname;
+        const searchParams: string = window.location.search;
 
         if (pb.authStore.isValid) {
-            // If authorized but on /login or /register, go to dashboard
             if (currentPath === '/login' || currentPath === '/register') {
                 goto('/' + searchParams);
             }
