@@ -13,11 +13,11 @@
         const currentPostId = page.url.searchParams.get("id");
 
         if (currentPostId === post.id) {
-            openModal();
+            open();
         }
     })
 
-    function openModal() {
+    function open() {
         pushState(`?id=${post.id}`, {});
         isModalOpen = true;
     }
@@ -37,7 +37,7 @@
             {/if}
         </div>
         <div class="w-1/5">
-            <button on:click={openModal}>
+            <button on:click={open}>
                 <ArrowRightOutline class="w-8 h-8 mt-1 text-orange-500"/>
             </button>
         </div>

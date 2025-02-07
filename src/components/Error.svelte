@@ -1,8 +1,17 @@
 <script>
     import {Toast} from "flowbite-svelte";
     import {ExclamationCircleSolid} from "flowbite-svelte-icons";
+    import {onMount} from "svelte";
 
     let {error} = $props();
+    let jsonError = $state({ "data": null, message: "", status: null});
+
+    // If it's a JSON string, parse and replace incoming error.
+    onMount(() => {
+        if(JSON.parse(error)) {
+            jsonError = JSON.parse(error);
+        }
+    });
 </script>
 
 {#if error}
@@ -12,7 +21,9 @@
                 <ExclamationCircleSolid class="w-5 h-5"/>
             </svelte:fragment>
 
-            {#if typeof error === 'string'}
+            {#if jsonError}
+                <p>{jsonError.message}</p>
+            {:else if typeof error === 'string'}
                 <p>{error}</p>
             {/if}
 

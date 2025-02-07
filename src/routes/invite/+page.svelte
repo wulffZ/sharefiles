@@ -1,9 +1,10 @@
 <script lang="ts">
-    import {Button, Heading, Modal, P} from 'flowbite-svelte';
     import {v4 as uuidv4} from 'uuid';
-    import {ExclamationCircleOutline} from 'flowbite-svelte-icons';
     import Error from "../../components/Error.svelte";
     import {pb} from "$lib/stores/pocketbase.js";
+
+    import {Button, Heading, Modal, P} from 'flowbite-svelte';
+    import {ExclamationCircleOutline} from 'flowbite-svelte-icons';
 
     let confirmModal = $state(false);
     let inviteCode = $state('');
@@ -36,7 +37,7 @@
 
 <main class="flex flex-col max-w-7xl mx-auto mt-4">
     <div class="text-center mt-2">
-        <Heading tag="h1" class="mb-4" customSize="text-3xl font-extrabold  md:text-4xl lg:text-5xl">Invite others to
+        <Heading tag="h1" class="mb-4" customSize="text-2xl font-extrabold  md:text-3xl lg:text-4xl">Invite others to
             sharefiles
         </Heading>
         <P class="mb-4 text-lg lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">This platform is meant for everyone to

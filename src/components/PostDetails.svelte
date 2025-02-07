@@ -1,8 +1,16 @@
 <script>
-    import {Modal, Button, Badge} from 'flowbite-svelte';
-    import {pushState} from "$app/navigation";
-    import {DownloadOutline} from "flowbite-svelte-icons";
+    import {pb} from "$lib/stores/pocketbase";
     import {env} from "$env/dynamic/public";
+    import {goto, pushState} from "$app/navigation";
+
+    import {Modal, Button, Badge, Hr} from 'flowbite-svelte';
+    import {
+        DownloadOutline,
+        TrashBinOutline,
+        PenNibOutline,
+        UserAddOutline,
+        ExclamationCircleOutline
+    } from "flowbite-svelte-icons";
 
     let {
         post,
@@ -10,9 +18,15 @@
         fileUrl = `${env.PUBLIC_POCKETBASE_URL}/api/files/${post.collectionId}/${post.id}/${post.file}`
     } = $props();
 
+    let confirmDelete = $state(false);
+
     function closeModal() {
         isOpen = false;
         pushState(window.location.pathname, {});
+    }
+
+    async function remove() {
+        await pb.collection('posts').delete(post.id);
     }
 
     function download() {
@@ -28,18 +42,57 @@
         on:close={closeModal}
 >
     <div class="space-y-4">
-        <p>{post.description}</p>
-        <div class="flex flex-wrap gap-2">
-            {#each post.tags as tag}
-                <Badge>{tag}</Badge>
-            {/each}
+        <div class="flex flex-row justify-between">
+            <div class="">
+                <p>{post.description}</p>
+            </div>
+            <div class="flex flex-row">
+                <UserAddOutline class="w-6 h-6"/>
+                <p class="text-sm ml-1">
+                    {post.expand?.user_id?.name ?? '?'}
+                </p>
+            </div>
+        </div>
+        <div class="flex justify-between items-center">
+            <div class="flex flex-wrap gap-2">
+                {#each post.tags as tag}
+                    <Badge>{tag}</Badge>
+                {/each}
+            </div>
+
+            <div class="text-sm text-gray-500 text-right">
+                <p>Created: {new Date(post.created).toLocaleDateString()}</p>
+                <p>Updated: {new Date(post.updated).toLocaleDateString()}</p>
+            </div>
         </div>
     </div>
 
     <svelte:fragment slot="footer">
-        <Button on:click={download}>
-            Download
-            <DownloadOutline class="w-6 h-6 ml-2"/>
-        </Button>
+        <div class="flex justify-between items-center w-full">
+            <div class="flex flex-row gap-2">
+                <Button color="red" on:click={() => (confirmDelete = true)}>
+                    <TrashBinOutline class="w-6 h-6"/>
+                </Button>
+
+                <Button color="green" on:click={() => goto('edit/' + post.id)}>
+                    <PenNibOutline class="w-6 h-6"/>
+                </Button>
+            </div>
+
+            <div class="flex flex-row">
+                <Button class="ml-4" on:click={download}>
+                    <DownloadOutline class="w-6 h-6"/>
+                </Button>
+            </div>
+        </div>
     </svelte:fragment>
+</Modal>
+
+<Modal bind:open={confirmDelete} size="xs" class="border-2" autoclose>
+    <div class="text-center">
+        <ExclamationCircleOutline class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"/>
+        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure?</h3>
+        <Button color="red" class="me-2" on:click={remove}>Yes, I'm sure</Button>
+        <Button color="alternative">No, cancel</Button>
+    </div>
 </Modal>

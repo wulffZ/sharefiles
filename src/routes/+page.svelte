@@ -1,25 +1,29 @@
 <script lang="ts">
     import {pb} from "$lib/stores/pocketbase";
     import Post from "../components/Post.svelte";
-    import {Heading, P, Spinner} from "flowbite-svelte";
     import {searchQuery} from "$lib/stores/search";
     import {onMount, onDestroy} from "svelte";
+
+    import {Heading, P, Spinner} from "flowbite-svelte";
 
     let debouncedTimeout: number;
     let posts = null;
     let loading = false;
     let unsubscribeSearchQuery: () => void;
 
-    async function getPosts(query: string) {
+    async function get(query: string) {
         try {
             loading = true;
 
             if (query) {
                 posts = await pb.collection('posts').getList(1, 50, {
-                    filter: `(title?~"${query}" || description?~"${query}" || tags?~"${query}")`
+                    filter: `(title?~"${query}" || description?~"${query}" || tags?~"${query}")`,
+                    expand: 'user_id'
                 });
             } else {
-                posts = await pb.collection('posts').getList();
+                posts = await pb.collection('posts').getList(1, 50, {
+                    expand: 'user_id'
+                });
             }
         } catch (error) {
             console.error('Search error:', error);
@@ -36,12 +40,12 @@
             if (debouncedTimeout) clearTimeout(debouncedTimeout);
 
             debouncedTimeout = setTimeout(() => {
-                getPosts(query);
+                get(query);
             }, 500);
         });
 
         if (!searchQuery) {
-            getPosts('');
+            get('');
         }
     });
 
