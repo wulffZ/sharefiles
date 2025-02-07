@@ -1,5 +1,5 @@
 <script>
-    import {pb} from "$lib/stores/pocketbase";
+    import {currentUser, pb} from "$lib/stores/pocketbase";
     import {env} from "$env/dynamic/public";
     import {goto, pushState} from "$app/navigation";
 
@@ -18,6 +18,7 @@
         fileUrl = `${env.PUBLIC_POCKETBASE_URL}/api/files/${post.collectionId}/${post.id}/${post.file}`
     } = $props();
 
+    let isOwner = $state(post.user_id === $currentUser?.id);
     let confirmDelete = $state(false);
 
     function closeModal() {
@@ -69,15 +70,17 @@
 
     <svelte:fragment slot="footer">
         <div class="flex justify-between items-center w-full">
-            <div class="flex flex-row gap-2">
-                <Button color="red" on:click={() => (confirmDelete = true)}>
-                    <TrashBinOutline class="w-6 h-6"/>
-                </Button>
+            {#if isOwner}
+                <div class="flex flex-row gap-2">
+                    <Button color="red" on:click={() => (confirmDelete = true)}>
+                        <TrashBinOutline class="w-6 h-6"/>
+                    </Button>
 
-                <Button color="green" on:click={() => goto('edit/' + post.id)}>
-                    <PenNibOutline class="w-6 h-6"/>
-                </Button>
-            </div>
+                    <Button color="green" on:click={() => goto('edit/' + post.id)}>
+                        <PenNibOutline class="w-6 h-6"/>
+                    </Button>
+                </div>
+            {/if}
 
             <div class="flex flex-row">
                 <Button class="ml-4" on:click={download}>
