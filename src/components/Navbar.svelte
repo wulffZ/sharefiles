@@ -18,24 +18,46 @@
         <Spinner class="w-20 h-20" color="primary"/>
     </div>
 {:else if $currentUser}
-    <Navbar color="form" class="xl:rounded-lg xl:mt-4">
-        <NavBrand href="/" class="ml-2 mb-1">
-            <span class="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">sharefiles</span>
-        </NavBrand>
-        <div class="">
+    <Navbar color="form" class="xl:rounded-lg xl:mt-4 flex items-center justify-between px-4">
+        <div class="flex items-center gap-2">
+            <NavBrand href="/" class="ml-2 mb-1">
+            <span class="self-center whitespace-nowrap text-2xl font-semibold dark:text-white">
+                sharefiles
+            </span>
+            </NavBrand>
         </div>
-        <div class="flex">
-            <Input id="search-navbar" class="max-h-10 xl:mt-2 xl:mr-5 xl:w-40 dark:bg-gray-700" placeholder="Search..."  name="query" bind:value={$searchQuery}/>
-            <NavUl>
+
+        <div class="flex items-center gap-4 xl:ml-auto">
+            <!-- Desktop search bar -->
+            <Input id="search-navbar"
+                   class="max-h-10 xl:w-40 dark:bg-gray-700 max-w-32 flex-grow-0 hidden xl:block"
+                   placeholder="Search..."
+                   name="query"
+                   bind:value={$searchQuery}
+            />
+
+            <!-- Nav Links -->
+            <NavUl class="hidden xl:flex xl:items-center xl:gap-2">
                 <NavLi href="/">Dash</NavLi>
                 <NavLi href="/new">New</NavLi>
                 <NavLi href="/invite">Invite</NavLi>
-
-                <!-- Colour switch -->
-                <DarkMode class="p-0" size="lg"/>
             </NavUl>
         </div>
-        <NavHamburger/>
+
+        <div class="flex items-center gap-4">
+            <NavHamburger class="xl:hidden"/>
+            <DarkMode class="p-0" size="lg"/>
+        </div>
+
+        <!-- Mobile search bar -->
+        <div class="flex xl:hidden w-full mt-2">
+            <Input id="search-navbar"
+                   class="w-full max-h-10 dark:bg-gray-700"
+                   placeholder="Search..."
+                   name="query"
+                   bind:value={$searchQuery}
+            />
+        </div>
     </Navbar>
 {:else}
     <Navbar color="form" class="max-w-2xl mx-auto xl:rounded-lg xl:mt-4">
