@@ -13,10 +13,17 @@
 
         if (pb.authStore.isValid) {
             if (currentPath === '/login' || currentPath === '/register') {
-                goto('/' + searchParams);
+                return goto('/' + searchParams);
             }
-        } else if (currentPath !== '/register') {
-            goto('/login');
+            return; // User is authenticated.
+        }
+
+        if (currentPath.includes('/public')) {
+            return; // Allow access to public.
+        }
+
+        if (currentPath !== '/register') {
+            return goto('/login');
         }
     });
 </script>

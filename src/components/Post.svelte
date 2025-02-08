@@ -1,11 +1,12 @@
 <script>
-    import {ArrowRightOutline} from "flowbite-svelte-icons";
-    import {Badge, Card} from "flowbite-svelte";
-    import PostDetails from './PostDetails.svelte';
     import {pushState} from "$app/navigation";
     import {onMount} from "svelte";
     import {page} from "$app/state";
     import {createEventDispatcher} from 'svelte';
+
+    import {ArrowRightOutline} from "flowbite-svelte-icons";
+    import {Badge, Card} from "flowbite-svelte";
+    import PostDetails from './PostDetails.svelte';
 
     let {post} = $props();
     let isModalOpen = $state(false);

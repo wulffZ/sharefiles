@@ -4,7 +4,7 @@
     import {onMount} from "svelte";
 
     let {error} = $props();
-    let jsonError = $state({ "data": null, message: "", status: null});
+    let jsonError = $state({});
 
     // If it's a JSON string, parse and replace incoming error.
     onMount(() => {

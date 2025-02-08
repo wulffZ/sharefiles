@@ -10,17 +10,18 @@
         TrashBinOutline,
         PenNibOutline,
         UserAddOutline,
-        ExclamationCircleOutline
+        ExclamationCircleOutline,
+        LinkOutline
     } from "flowbite-svelte-icons";
     import Error from "./Error.svelte";
+    import {v4 as uuidv4} from "uuid";
 
     let {
         post,
         isOpen = $bindable(),
         fileUrl = `${env.PUBLIC_POCKETBASE_URL}/api/files/${post.collectionId}/${post.id}/${post.file}`
     } = $props();
-
-    let dispatch = createEventDispatcher();  // Create event dispatcher
+    let dispatch = createEventDispatcher();
 
     let isOwner = $state(post.user_id === $currentUser?.id);
     let confirmDelete = $state(false);
@@ -44,6 +45,25 @@
 
     function download() {
         window.open(fileUrl, '_blank');
+    }
+
+    async function publicLink() {
+        try {
+            const uuid = uuidv4();
+            const formData = new FormData();
+
+            formData.append('slug', uuid)
+            formData.append('post_id', post.id)
+            formData.append('user_id', $currentUser?.id)
+
+            await pb.collection('publicLinks').create(formData);
+
+            //todo redirect them
+            console.log('created')
+
+        } catch(err: any) {
+            error = err?.response.message || "An unexpected error occurred. Please check the console and report."
+        }
     }
 </script>
 
@@ -90,6 +110,10 @@
 
                     <Button color="green" on:click={() => goto('edit/' + post.id)}>
                         <PenNibOutline class="w-6 h-6"/>
+                    </Button>
+
+                    <Button color="light" on:click={publicLink}>
+                        <LinkOutline class="w-6 h-6"/>
                     </Button>
                 </div>
             {/if}

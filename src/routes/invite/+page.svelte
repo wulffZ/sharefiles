@@ -10,10 +10,10 @@
     let inviteCode = $state('');
     let error = $state('');
 
-    let form = {
+    let form = $state({
         code: '',
         expired: false,
-    }
+    });
 
     async function create() {
         const uuid = uuidv4();
@@ -48,9 +48,7 @@
 
         <P class="mt-2 text-lg lg:text-xl sm:px-16 xl:px-48 dark:text-red-400 font-bold">Misuse may lead to account
             deletion!</P>
-    </div>
-    <div class="flex flex-row justify-end mt-4 ">
-        <Button on:click={() => (confirmModal = true)}>Create</Button>
+        <Button class="mt-4" on:click={() => (confirmModal = true)}>Create</Button>
     </div>
 </main>
 
