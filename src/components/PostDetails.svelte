@@ -58,9 +58,7 @@
 
             await pb.collection('publicLinks').create(formData);
 
-            //todo redirect them
-            console.log('created')
-
+            return goto('/public/' + uuid)
         } catch(err: any) {
             error = err?.response.message || "An unexpected error occurred. Please check the console and report."
         }
