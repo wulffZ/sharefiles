@@ -35,19 +35,17 @@
                    name="query"
                    bind:value={$searchQuery}
             />
-
-            <!-- Nav Links -->
-            <NavUl class="hidden xl:flex xl:items-center xl:gap-2">
-                <NavLi href="/">Dash</NavLi>
-                <NavLi href="/new">New</NavLi>
-                <NavLi href="/invite">Invite</NavLi>
-            </NavUl>
         </div>
 
-        <div class="flex items-center gap-4">
-            <NavHamburger class="xl:hidden"/>
-            <DarkMode class="p-0" size="lg"/>
-        </div>
+        <NavHamburger/>
+
+        <!-- Nav Links -->
+        <NavUl>
+            <NavLi href="/">Dash</NavLi>
+            <NavLi href="/new">New</NavLi>
+            <NavLi href="/invite">Invite</NavLi>
+        </NavUl>
+        <DarkMode class="p-2 hidden xl:inline-flex" size="lg"/>
 
         <!-- Mobile search bar -->
         <div class="flex xl:hidden w-full mt-2">
@@ -57,6 +55,8 @@
                    name="query"
                    bind:value={$searchQuery}
             />
+
+            <DarkMode class="p-2" size="lg"/>
         </div>
     </Navbar>
 {:else}
