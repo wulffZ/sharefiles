@@ -1,7 +1,8 @@
-<script>
+<script lang="ts">
     import {currentUser, pb} from "$lib/stores/pocketbase";
     import {env} from "$env/dynamic/public";
     import {goto, pushState} from "$app/navigation";
+    import {createEventDispatcher} from "svelte";
 
     import {Modal, Button, Badge, Hr} from 'flowbite-svelte';
     import {
@@ -11,6 +12,7 @@
         UserAddOutline,
         ExclamationCircleOutline
     } from "flowbite-svelte-icons";
+    import Error from "./Error.svelte";
 
     let {
         post,
@@ -18,8 +20,11 @@
         fileUrl = `${env.PUBLIC_POCKETBASE_URL}/api/files/${post.collectionId}/${post.id}/${post.file}`
     } = $props();
 
+    let dispatch = createEventDispatcher();  // Create event dispatcher
+
     let isOwner = $state(post.user_id === $currentUser?.id);
     let confirmDelete = $state(false);
+    let error = $state('');
 
     function closeModal() {
         isOpen = false;
@@ -27,7 +32,14 @@
     }
 
     async function remove() {
-        await pb.collection('posts').delete(post.id);
+        try {
+            await pb.collection('posts').delete(post.id)
+
+            closeModal();
+            dispatch("delete");
+        } catch(err: any) {
+            error = err?.response.message || "An unexpected error occurred. Please check the console and report."
+        }
     }
 
     function download() {
@@ -99,3 +111,7 @@
         <Button color="alternative">No, cancel</Button>
     </div>
 </Modal>
+
+{#if error}
+    <Error error={error}/>
+{/if}

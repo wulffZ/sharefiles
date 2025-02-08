@@ -5,9 +5,11 @@
     import {pushState} from "$app/navigation";
     import {onMount} from "svelte";
     import {page} from "$app/state";
+    import {createEventDispatcher} from 'svelte';
 
     let {post} = $props();
     let isModalOpen = $state(false);
+    let dispatch = createEventDispatcher();
 
     onMount(() => {
         const currentPostId = page.url.searchParams.get("id");
@@ -20,6 +22,10 @@
     function open() {
         pushState(`?id=${post.id}`, {});
         isModalOpen = true;
+    }
+
+    function handleRemove(event) {
+        dispatch("delete", event.detail);  // Forward event to parent
     }
 </script>
 
@@ -44,4 +50,4 @@
     </div>
 </Card>
 
-<PostDetails {post} bind:isOpen={isModalOpen}/>
+<PostDetails {post} bind:isOpen={isModalOpen} on:delete={handleRemove}/>

@@ -7,8 +7,8 @@
     import {Heading, P, Spinner} from "flowbite-svelte";
 
     let debouncedTimeout: number;
-    let posts = null;
-    let loading = false;
+    let posts = $state({items: []});
+    let loading = $state(false);
     let unsubscribeSearchQuery: () => void;
 
     async function get(query: string) {
@@ -67,7 +67,7 @@
             </div>
         {:else if posts && posts.items.length > 0}
             {#each posts.items as post}
-                <Post {post}/>
+                <Post {post} on:delete={get}/>
             {/each}
         {:else}
             <div class="flex flex-col">
