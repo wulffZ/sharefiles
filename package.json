@@ -33,6 +33,7 @@
 	},
 	"dependencies": {
 		"keycloak-js": "^26.1.0",
-		"pocketbase": "^0.25.1"
+		"pocketbase": "^0.25.1",
+		"uuid": "^11.0.5"
 	}
 }

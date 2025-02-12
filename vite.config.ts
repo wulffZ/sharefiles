@@ -6,5 +6,12 @@ export default defineConfig({
 	plugins: [
 		sveltekit(),
 		Icons({ compiler: "svelte", autoInstall: true }),
-	]
+	],
+	css: {
+		preprocessorOptions: {
+			scss: {
+				silenceDeprecations: ["legacy-js-api"],
+			},
+		},
+	},
 });

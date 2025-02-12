@@ -1,39 +1,88 @@
 <script lang="ts">
 
-    import {Button, Hr, Input, Label, Toast} from "flowbite-svelte";
-    import {ExclamationCircleSolid} from "flowbite-svelte-icons";
-    import {enhance} from '$app/forms';
+    import {Button, Hr, Input, Label} from "flowbite-svelte";
+    import {pb} from "$lib/stores/pocketbase";
+    import {goto} from "$app/navigation";
+    import Error from "../../components/Error.svelte";
 
-    let { form } = $props();
+    let invite = null;
+    let inviteCode = $state('');
+    let error = $state('');
+
+    let form = {
+        email: '',
+        name: '',
+        password: '',
+        passwordConfirm: '',
+    }
+
+    async function register() {
+        try {
+            invite = await pb.collection('invites').getFirstListItem(`code="${inviteCode}"`);
+        } catch (err: any) {
+            return error = 'Invalid invite code.'
+        }
+
+        if (invite.expired === true) {
+            return error = 'Invite code has expired.'
+        }
+
+        try {
+            // Register
+            await pb.collection('users').create(form);
+
+            // Log in
+            await pb.collection('users').authWithPassword(form.email, form.password);
+
+            const updatedInvite = {
+                code: invite.code,
+                expired: true
+            }
+
+            await pb.collection('invites').update(invite.id, updatedInvite);
+
+            return await goto('/');
+        } catch (err: any) {
+            return error = err?.response;
+        }
+    }
 </script>
 
 <svelte:head>
-    <title>Home</title>
+    <title>Register</title>
 </svelte:head>
 
 <form
         class="max-w-xl mx-auto mt-6"
-        enctype="multipart/form-data"
-        method="post"
-        use:enhance
+        onsubmit={register}
 >
-    <p class="tracking-tight leading-none text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Welcome to sharefiles!</p>
+    <p class="tracking-tight leading-none text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Welcome to
+        sharefiles!</p>
 
     <div class="mt-2">
-        <Label for="default-input" class="block mb-2">Name & email</Label>
-        <Input id="default-input" placeholder="Name" name="name" required/>
-        <Input id="default-input" placeholder="Email" name="email" class="mt-2" required/>
+        <Label for="default-input" class="block mb-2">Name and email</Label>
+        <Input id="default-input" placeholder="Name" bind:value={form.name} name="name" required/>
+        <Input id="default-input" placeholder="Email" bind:value={form.email} name="email" class="mt-2" required/>
     </div>
 
-    <Hr classHr="w-96 h-1 mx-auto my-4 rounded md:my-8" />
+    <Hr classHr="w-96 h-1 mx-auto my-4 rounded md:my-8"/>
 
-    <div class="mt-4">
-        <Label for="default-input" class="block mb-2">Password</Label>
-        <Input id="default-input" placeholder="Password" name="password" required/>
-        <Input id="default-input" placeholder="Confirm password" name="passwordConfirm" class="mt-2" required/>
+    <div class="mt-2">
+        <Label for="default-input" class="block mb-2">Password and invite code</Label>
+        <Input id="default-input" placeholder="Password" bind:value={form.password} name="password" type="password"
+               required/>
+        <Input id="default-input" class="mt-2" placeholder="Confirm password" bind:value={form.passwordConfirm}
+               name="passwordConfirm" type="password"
+               required/>
+        <Input id="default-input" class="mt-2" placeholder="Invite code" bind:value={inviteCode} name="invite"
+               type="text"
+               required/>
     </div>
 
-    <div class="flex flex-row justify-end mt-4">
+    <div class="flex flex-row justify-between mt-4">
+        <button class="text-gray-900 dark:text-white" onclick={() => goto("/login")}>Log in <span
+                class="underline text-primary-700 hover:text-primary-800 dark:text-primary-600 dark:hover:text-primary-700 dark:text-white">instead.</span>
+        </button>
         <Button
                 type="submit"
                 formaction="?/create"
@@ -41,19 +90,8 @@
         </Button>
     </div>
 
-    {#if form?.errors}
-        <div class="error">
-            <Toast position="bottom-right">
-                <svelte:fragment slot="icon">
-                    <ExclamationCircleSolid class="w-5 h-5" />
-                    <span class="sr-only">Warning icon</span>
-                </svelte:fragment>
-                <p>{ form?.errors.name }</p>
-                <p>{ form?.errors.email }</p>
-                <p>{ form?.errors.password }</p>
-                <p>{ form?.errors.password_confirmation }</p>
-            </Toast>
-        </div>
+    {#if error}
+        <Error error={error}/>
     {/if}
 </form>
 

@@ -2,26 +2,14 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json .
-COPY pnpm-lock.yaml .
+COPY package*.json ./
 
-RUN npm i -g pnpm
-RUN pnpm install
+RUN npm install
 
 COPY . .
 
-RUN pnpm run build
-RUN pnpm prune --prod
+RUN npm run build
 
-FROM node:22-alpine AS deployer
+EXPOSE 5173
 
-WORKDIR /app
-
-COPY --from=builder /app/build build/
-COPY --from=builder /app/package.json .
-
-EXPOSE 3000
-
-ENV NODE_ENV=production
-
-CMD [ "node", "build" ]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
