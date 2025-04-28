@@ -75,6 +75,8 @@
         href="/"
         on:click={() => {
           pb.authStore.clear();
+          $searchQuery = "";
+          window.location.href = "/login";
         }}>Logout</NavLi
       >
     </NavUl>
@@ -94,12 +96,16 @@
     </div>
   </Navbar>
 {:else}
-  <Navbar color="form" class="max-w-2xl mx-auto xl:rounded-lg xl:mt-4">
-    <NavBrand>
+  <Navbar
+    color="form"
+    class="xl:rounded-lg xl:mt-4 flex items-center justify-between px-4"
+  >
+    <NavBrand class="ml-2 mb-1">
       <span
-        class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
-        >sharefiles</span
+        class="self-center whitespace-nowrap text-2xl font-semibold dark:text-white"
       >
+        Sharefiles
+      </span>
     </NavBrand>
     <NavUl>
       <!-- Colour switch -->
