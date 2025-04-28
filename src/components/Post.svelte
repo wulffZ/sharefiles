@@ -10,7 +10,9 @@
 
   let { post } = $props();
   let isModalOpen = $state(false);
-  let dispatch = createEventDispatcher();
+  let dispatch = createEventDispatcher<{
+    delete: undefined;
+  }>();
 
   onMount(() => {
     const currentPostId = page.url.searchParams.get("id");
@@ -34,28 +36,26 @@
   <div class="flex flex-row">
     <div class="w-4/5">
       <h5
-        class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+        class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white line-clamp-2"
       >
         {post.title}
       </h5>
       <p
-        class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight"
+        class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight line-clamp-8"
       >
         {post.description}
       </p>
-      {#if post.tags}
-        <div class="flex flex-wrap gap-2">
-          {#each post.tags as tag}
-            <Badge>{tag}</Badge>
-          {/each}
-        </div>
-      {/if}
     </div>
     <div class="w-1/5">
       <button onclick={open}>
         <ArrowRightOutline class="w-8 h-8 mt-1 text-orange-500" />
       </button>
     </div>
+  </div>
+  <div class="flex flex-wrap gap-2 mt-auto">
+    {#each post.tags as tag}
+      <Badge>{tag}</Badge>
+    {/each}
   </div>
 </Card>
 
