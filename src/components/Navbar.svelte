@@ -9,7 +9,7 @@
     NavUl,
     Spinner,
   } from "flowbite-svelte";
-  import { currentUser } from "$lib/stores/pocketbase";
+  import { currentUser, pb } from "$lib/stores/pocketbase";
   import { onMount } from "svelte";
   import { searchQuery } from "$lib/stores/search";
 
@@ -71,6 +71,12 @@
       >
       <NavLi href="/new">New</NavLi>
       <NavLi href="/invite">Invite</NavLi>
+      <NavLi
+        href="/"
+        on:click={() => {
+          pb.authStore.clear();
+        }}>Logout</NavLi
+      >
     </NavUl>
     <DarkMode class="p-2 hidden xl:inline-flex" size="lg" />
 
