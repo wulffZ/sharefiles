@@ -41,12 +41,6 @@
     title: "",
     description: "",
   });
-  let tags = $state(
-    Object.values(Tags).map((tag) => ({
-      value: tag,
-      name: tag,
-    }))
-  );
   let textAreaProps = $state({
     id: "description",
     name: "description",
