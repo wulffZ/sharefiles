@@ -8,6 +8,8 @@
   let inviteCode = $state("");
   let error = $state("");
 
+  let form = { = $state("");
+
   let form = {
     email: "",
     name: "",

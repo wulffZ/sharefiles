@@ -125,7 +125,7 @@
       <Label for="countries">Tags</Label>
       <Helper class="text-sm">
         Suggestions? <a
-          href="/"
+          href="https://github.com/wulffZ/sharefiles"
           class="font-medium text-primary-600 hover:underline dark:text-primary-500"
           >Github</a
         >
@@ -138,9 +138,20 @@
       class="mt-2"
       bind:value={tagInput}
       on:keydown={(e) => {
+        if (tagInput.length > 11) {
+          if (
+            e.key !== "Backspace" &&
+            e.key !== "Enter" &&
+            e.key !== "," &&
+            e.key !== "ArrowLeft" &&
+            e.key !== "ArrowRight"
+          ) {
+            e.preventDefault();
+          }
+        }
         if (e.key === "Enter" || e.key === ",") {
           e.preventDefault();
-          const newTag = tagInput.trim();
+          const newTag = tagInput.trim().toUpperCase();
           if (newTag && !selectedTags.includes(newTag)) {
             selectedTags = [...selectedTags, newTag];
             tagInput = "";
@@ -154,6 +165,7 @@
           <Badge>
             {tag}
             <button
+              tabindex="-1"
               class="ml-1"
               onclick={() => {
                 selectedTags = selectedTags.filter((t) => t !== tag);

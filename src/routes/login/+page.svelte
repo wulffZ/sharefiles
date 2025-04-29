@@ -37,6 +37,7 @@
   <div class="mt-2">
     <Label for="default-input" class="block mb-2">Email and password</Label>
     <Input
+      type="email"
       id="default-input"
       placeholder="Email"
       bind:value={form.email}

@@ -139,6 +139,11 @@
           <pre class="p-4 bg-gray-50 dark:bg-gray-800 overflow-x-auto">
             <code>{fileContent}</code>
           </pre>
+        {:else if fileType === "audio"}
+          <audio controls class="w-full">
+            <source src={fileUrl} type="audio/{post.file.split('.').pop()}" />
+            Your browser does not support the audio element.
+          </audio>
         {:else}
           <div></div>
         {/if}
@@ -148,7 +153,7 @@
     <div class="flex justify-between items-center">
       <div class="flex flex-wrap gap-2">
         {#each post.tags as tag}
-          <Badge>{tag}</Badge>
+          <Badge>{tag.toUpperCase()}</Badge>
         {/each}
       </div>
 

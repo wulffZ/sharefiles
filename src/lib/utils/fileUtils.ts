@@ -21,6 +21,12 @@ export async function determineFileType(file: string, fileUrl: string): Promise<
   }
 
   if ([
+    "mp3", "wav", "ogg", "flac", "aac", "m4a", "wma", "aiff", "alac", "mid", "midi"
+  ].includes(extension)) {
+    return { fileType: "audio" };
+  }
+
+  if ([
     "txt", "md", "markdown", "html", "htm", "css", "scss", "sass", "less",
     "js", "jsx", "ts", "tsx", "mjs", "cjs", "json", "xml", "yaml", "yml",
     "toml", "py", "rb", "php", "java", "c", "cpp", "cs", "go", "rs", "swift",

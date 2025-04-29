@@ -19,10 +19,12 @@
         posts = await pb.collection("posts").getList(1, 50, {
           filter: `(title?~"${query}" || description?~"${query}" || tags?~"${query}")`,
           expand: "user_id",
+          sort: "-updated",
         });
       } else {
         posts = await pb.collection("posts").getList(1, 50, {
           expand: "user_id",
+          sort: "-created",
         });
       }
     } catch (error) {
@@ -59,9 +61,9 @@
   <title>Home</title>
 </svelte:head>
 
-<main class="flex justify-center flex-col max-w-5xl mx-auto mt-4">
+<main class="flex justify-center items-center flex-col mx-auto mt-4">
   <ul
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 m-2 gap-6"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 m-2 gap-6"
   >
     {#if loading}
       <div class="flex justify-center items-center col-span-full">
@@ -74,7 +76,7 @@
     {:else}
       <div class="flex flex-col">
         <Heading tag="h2" customSize="text-4xl font-extrabold">
-          No results <span class="text-orange-500">:(</span>
+          No results <span class="text-orange-500">:</span>
         </Heading>
         <P class="my-4 text-gray-500"
           >Try searching for keywords in the title, description, or tags.</P
