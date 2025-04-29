@@ -95,7 +95,7 @@
   <title>New</title>
 </svelte:head>
 
-<form class="max-w-xl mx-auto mt-6" onsubmit={create}>
+<form class="max-w-xl mx-auto mt-6" onsubmit={() => create()}>
   <Heading
     tag="h1"
     class="mb-4"

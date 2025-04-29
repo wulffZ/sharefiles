@@ -1,10 +1,11 @@
 <script lang="ts">
   import { pushState } from "$app/navigation";
   import { onMount } from "svelte";
-  import { page } from "$app/state";
+  import { page } from "$app/stores";
   import { createEventDispatcher } from "svelte";
   import { determineFileType } from "$lib/utils/fileUtils";
   import { env } from "$env/dynamic/public";
+  import { searchQuery } from "$lib/stores/search";
 
   import {
     ArrowRightOutline,
@@ -13,21 +14,39 @@
     FileVideoOutline,
     FileMusicOutline,
     FileCodeOutline,
+    ChevronDownOutline,
+    ArchiveOutline,
   } from "flowbite-svelte-icons";
-  import { Badge, Card } from "flowbite-svelte";
+  import { Badge, Card, Button } from "flowbite-svelte";
   import PostDetails from "./PostDetails.svelte";
 
-  let { post } = $props();
-  let isModalOpen = $state(false);
-  let fileType = $state("");
-  let fileContent = $state("");
-  let fileUrl = post.file; // Assuming post.file contains the URL
-  let dispatch = createEventDispatcher<{
+  interface Post {
+    id: string;
+    title: string;
+    file: string;
+    tags: string[];
+    updated: string;
+    collectionId: string;
+  }
+
+  export let post: Post;
+  let isModalOpen = false;
+  let fileType = "";
+  let fileContent = "";
+  let fileUrl = post.file;
+  let displayTag: string;
+
+  const dispatch = createEventDispatcher<{
     delete: undefined;
   }>();
 
+  $: query = $searchQuery?.toUpperCase() ?? "";
+  $: matchingTags = query
+    ? post.tags.filter((tag) => tag.toUpperCase().includes(query))
+    : [];
+
   onMount(() => {
-    const currentPostId = page.url.searchParams.get("id");
+    const currentPostId = $page.url.searchParams.get("id");
 
     if (currentPostId === post.id) {
       open();
@@ -40,15 +59,15 @@
   }
 
   function handleRemove(event: CustomEvent) {
-    dispatch("delete", event.detail); // Forward event to parent
+    dispatch("delete", event.detail);
   }
 
-  $effect(() => {
+  $: {
     determineFileType(post.file, fileUrl).then((result) => {
       fileType = result.fileType;
       if (result.fileContent) fileContent = result.fileContent;
     });
-  });
+  }
 </script>
 
 <Card padding="md">
@@ -68,6 +87,8 @@
         <FileMusicOutline class="w-16 h-32 text-green-500 mx-auto" />
       {:else if fileType === "text"}
         <FileCodeOutline class="w-16 h-32 text-gray-500 mx-auto " />
+      {:else if fileType === "zip"}
+        <ArchiveOutline class="w-16 h-32 text-yellow-500 mx-auto" />
       {:else}
         <FileOutline class="w-16 h-32 text-gray-500 mx-auto" />
       {/if}
@@ -75,7 +96,18 @@
         <h5
           class="my-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white line-clamp-2"
         >
-          span{post.title}
+          {#if query}
+            {@html post.title
+              .split(" ")
+              .map((word) =>
+                word.toUpperCase().includes(query)
+                  ? `<span class="text-purple-500">${word}</span>`
+                  : word
+              )
+              .join(" ")}
+          {:else}
+            {post.title}
+          {/if}
         </h5>
       </div>
       <div class="mb-1 flex flex-row justify-between">
@@ -85,40 +117,19 @@
       </div>
     </div>
   </button>
-  <div class="flex flex-wrap gap-2 mt-auto">
-    {#each post.tags as tag}
-      <Badge>{tag.toUpperCase()}</Badge>
-    {/each}
+  <div class="flex flex-wrap gap-2 mt-auto items-center">
+    <Badge>{(post.file.split(".").pop() ?? "").toUpperCase()}</Badge>
+    {#if query && matchingTags.length > 0}
+      {#each matchingTags as tag}
+        <Badge color="purple">
+          <span>{tag.toUpperCase()}</span>
+        </Badge>
+      {/each}
+    {/if}
+    {#if post.tags.length > matchingTags.length}
+      <Badge>+ {post.tags.length - matchingTags.length}</Badge>
+    {/if}
   </div>
 </Card>
-<!-- <Card>
-  <div class="flex flex-row">
-    <div class="w-4/5">
-      <h5
-        class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white line-clamp-2"
-      >
-        {post.title}
-      </h5>
-      <p
-        class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight line-clamp-8"
-      >
-        {post.description}
-      </p>
-      <p class="text-sm text-gray-500">
-        {new Date(post.updated).toLocaleDateString()}
-      </p>
-    </div>
-    <div class="w-1/5">
-      <button onclick={open}>
-        <ArrowRightOutline class="w-8 h-8 mt-1 text-orange-500" />
-      </button>
-    </div>
-  </div>
-  <div class="flex flex-wrap gap-2 mt-auto">
-    {#each post.tags as tag}
-      <Badge>{tag}</Badge>
-    {/each}
-  </div>
-</Card> -->
 
 <PostDetails {post} bind:isOpen={isModalOpen} on:delete={handleRemove} />

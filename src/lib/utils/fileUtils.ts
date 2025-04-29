@@ -26,6 +26,10 @@ export async function determineFileType(file: string, fileUrl: string): Promise<
     return { fileType: "audio" };
   }
 
+  if (["zip", "rar", "tar", "gz", "bz2", "7z", "iso", "dmg", "pkg", "deb", "rpm", "exe", "app", "msi", "cab", "jar", "war", "ear", "whl", "whl.gz", "whl.bz2", "whl.zip", "whl.tar", "whl.gz.tar", "whl.bz2.tar", "whl.zip.tar"].includes(extension)) {
+    return { fileType: "zip" };
+  } 
+
   if ([
     "txt", "md", "markdown", "html", "htm", "css", "scss", "sass", "less",
     "js", "jsx", "ts", "tsx", "mjs", "cjs", "json", "xml", "yaml", "yml",
