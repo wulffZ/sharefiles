@@ -12,6 +12,7 @@
   import { currentUser, pb } from "$lib/stores/pocketbase";
   import { onMount } from "svelte";
   import { searchQuery } from "$lib/stores/search";
+  import { SearchOutline } from "flowbite-svelte-icons";
 
   let loading = $state(true);
 
@@ -46,13 +47,18 @@
 
     <div class="flex items-center gap-4 xl:ml-auto">
       <!-- Desktop search bar -->
-      <Input
-        id="search-navbar"
-        class="max-h-10 xl:w-64 dark:bg-gray-700 max-w-64 flex-grow-0 hidden xl:block"
-        placeholder="Search..."
-        name="query"
-        bind:value={$searchQuery}
-      />
+      <div class="relative hidden xl:block">
+        <Input
+          id="search-navbar"
+          class="max-h-10 w-64 dark:bg-gray-700 pr-10"
+          placeholder="Search..."
+          name="query"
+          bind:value={$searchQuery}
+        />
+        <SearchOutline
+          class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+        />
+      </div>
     </div>
 
     <NavHamburger />
