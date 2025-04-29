@@ -145,7 +145,14 @@
             Your browser does not support the audio element.
           </audio>
         {:else}
-          <div></div>
+          <div class="flex justify-center items-center h-full text-center my-4">
+            <p>
+              File type <strong>{post.file.split(".").pop()}</strong> not
+              supported for preview.
+              <br />
+              Download to view.
+            </p>
+          </div>
         {/if}
       </div>
     {/if}
