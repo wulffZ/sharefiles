@@ -69,59 +69,75 @@
     </div>
   {:else if post}
     <Card size="lg" padding="xl">
-      <div class="flex justify-between items-center">
-        <div class="w-4/6">
-          <h5 class="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
-            {post.title}
-          </h5>
-          <p class="mb-5 text-base text-gray-500 sm:text-xs dark:text-gray-600">
-            {post.file}
-          </p>
-          <p class="mb-5 text-base text-gray-500 sm:text-lg dark:text-gray-400">
-            {post.description}
-          </p>
-        </div>
-        <div class="text-sm text-gray-500 text-right w-2/6">
-          <p>Created: {new Date(post.created).toLocaleDateString()}</p>
-          <p>Updated: {new Date(post.updated).toLocaleDateString()}</p>
-        </div>
+      <div class="flex flex-col justify-between">
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white">
+          {post.title}
+        </h3>
+        <i><p class="text-xs text-gray-600 mt-1">{post.file}</p></i>
       </div>
-      <div class="border rounded-lg overflow-hidden">
-        {#if fileType === "image"}
-          <img
-            src={fileUrl}
-            alt={post.file}
-            class="max-h-96 mx-auto object-contain"
-          />
-        {:else if fileType === "pdf"}
-          <iframe title="PDF Preview" src={fileUrl} class="w-full h-96"
-          ></iframe>
-        {:else if fileType === "video"}
-          <video controls class="w-full max-h-96">
-            <source src={fileUrl} type="video/{post.file.split('.').pop()}" />
-            <track kind="captions" label="English" srclang="en" />
-            Your browser does not support the video tag.
-          </video>
-        {:else if fileType === "text"}
-          <pre class="p-4 bg-gray-50 dark:bg-gray-800 overflow-y-auto max-h-96">
-            <code>{fileContent}</code>
-          </pre>
-        {:else}
-          <div></div>
-        {/if}
-      </div>
-      <div
-        class="justify-between items-center space-y-4 mt-4 sm:flex sm:space-y-0 sm:space-x-4 rtl:space-x-reverse"
-      >
-        <div class="flex flex-wrap gap-2">
-          {#each post.tags as tag}
-            <Badge>{tag}</Badge>
-          {/each}
+
+      <div class="space-y-4 mt-4">
+        <hr />
+        <div class="flex flex-row justify-between">
+          <div>
+            <p>{post.description}</p>
+          </div>
+          <div class="flex flex-row">
+            <UserAddOutline class="w-6 h-6" />
+            <p class="text-sm ml-1">
+              {post.expand?.user_id?.name ?? "Unknown"}
+            </p>
+          </div>
         </div>
 
-        <Button class="ml-4" on:click={download}>
-          <DownloadOutline class="w-6 h-6" />
-        </Button>
+        <div class="border rounded-lg overflow-hidden">
+          {#if fileType === "image"}
+            <img
+              src={fileUrl}
+              alt={post.file}
+              class="max-h-96 mx-auto object-contain"
+            />
+          {:else if fileType === "pdf"}
+            <iframe title="PDF Preview" src={fileUrl} class="w-full h-96"
+            ></iframe>
+          {:else if fileType === "video"}
+            <video controls class="w-full max-h-96">
+              <source src={fileUrl} type="video/{post.file.split('.').pop()}" />
+              <track kind="captions" label="English" srclang="en" />
+              Your browser does not support the video tag.
+            </video>
+          {:else if fileType === "text"}
+            <pre class="p-4 bg-gray-50 dark:bg-gray-800 overflow-x-auto">
+              <code>{fileContent}</code>
+            </pre>
+          {:else if fileType === "audio"}
+            <audio controls class="w-full">
+              <source src={fileUrl} type="audio/{post.file.split('.').pop()}" />
+              Your browser does not support the audio element.
+            </audio>
+          {:else}
+            <div></div>
+          {/if}
+        </div>
+
+        <div class="flex justify-between items-center">
+          <div class="flex flex-wrap gap-2">
+            {#each post.tags as tag}
+              <Badge>{tag.toUpperCase()}</Badge>
+            {/each}
+          </div>
+
+          <div class="w-2/5 text-sm text-gray-500 text-right">
+            <p>Created: {new Date(post.created).toLocaleDateString()}</p>
+            <p>Updated: {new Date(post.updated).toLocaleDateString()}</p>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <Button class="ml-4" on:click={download}>
+            <DownloadOutline class="w-6 h-6" />
+          </Button>
+        </div>
       </div>
     </Card>
   {:else}

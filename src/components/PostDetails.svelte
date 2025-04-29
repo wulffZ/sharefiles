@@ -157,7 +157,7 @@
         {/each}
       </div>
 
-      <div class="text-sm text-gray-500 text-right">
+      <div class="w-2/5 text-sm text-gray-500 text-right">
         <p>Created: {new Date(post.created).toLocaleDateString()}</p>
         <p>Updated: {new Date(post.updated).toLocaleDateString()}</p>
       </div>
