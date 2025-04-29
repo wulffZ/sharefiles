@@ -32,19 +32,15 @@
     class="xl:rounded-lg xl:mt-4 flex items-center justify-between px-4"
   >
     <div class="flex items-center gap-2">
-      <NavBrand
-        href="/"
-        on:click={() => {
-          // doesnt work somehow
-          $searchQuery = "";
-        }}
-        class="ml-2 mb-1"
-      >
-        <span
+      <NavBrand href="/" class="ml-2 mb-1">
+        <button
+          onclick={() => {
+            $searchQuery = "";
+          }}
           class="self-center whitespace-nowrap text-2xl font-semibold dark:text-white"
         >
           Sharefiles
-        </span>
+        </button>
       </NavBrand>
     </div>
 
