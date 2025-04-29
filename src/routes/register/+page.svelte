@@ -8,14 +8,12 @@
   let inviteCode = $state("");
   let error = $state("");
 
-  let form = { = $state("");
-
-  let form = {
+  let form = $state({
     email: "",
     name: "",
     password: "",
     passwordConfirm: "",
-  };
+  });
 
   async function register(event: SubmitEvent) {
     event.preventDefault();
