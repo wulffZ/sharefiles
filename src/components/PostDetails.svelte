@@ -119,42 +119,52 @@
         ></div>
       </div>
     {:else}
-      <div class="border rounded-lg overflow-hidden">
         {#if fileType === "image"}
-          <img
-            src={fileUrl}
-            alt={post.file}
-            class="max-h-96 mx-auto object-contain"
-          />
+          <div class="border rounded-lg overflow-hidden hover:scale-150 transition-all duration-300">
+            <img
+              src={fileUrl}
+              alt={post.file}
+              class="max-h-96 mx-auto object-contain"
+            />
+          </div>
         {:else if fileType === "pdf"}
-          <iframe title="PDF Preview" src={fileUrl} class="w-full h-96"
-          ></iframe>
+          <div class="border rounded-lg overflow-hidden">
+            <iframe title="PDF Preview" src={fileUrl} class="w-full h-96"
+            ></iframe>
+          </div>
         {:else if fileType === "video"}
-          <video controls class="w-full max-h-96">
-            <source src={fileUrl} type="video/{post.file.split('.').pop()}" />
-            <track kind="captions" label="English" srclang="en" />
-            Your browser does not support the video tag.
-          </video>
+          <div class="border rounded-lg overflow-hidden">
+            <video controls class="w-full max-h-96">
+              <source src={fileUrl} type="video/{post.file.split('.').pop()}" />
+              <track kind="captions" label="English" srclang="en" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
         {:else if fileType === "text"}
-          <pre class="p-4 bg-gray-50 dark:bg-gray-800 overflow-x-auto">
-            <code>{fileContent}</code>
-          </pre>
+          <div class="border rounded-lg overflow-hidden">
+            <pre class="p-4 bg-gray-50 dark:bg-gray-800 overflow-x-auto">
+              <code>{fileContent}</code>
+            </pre>
+          </div>
         {:else if fileType === "audio"}
-          <audio controls class="w-full">
-            <source src={fileUrl} type="audio/{post.file.split('.').pop()}" />
-            Your browser does not support the audio element.
-          </audio>
+          <div class="border rounded-lg overflow-hidden">
+            <audio controls class="w-full">
+              <source src={fileUrl} type="audio/{post.file.split('.').pop()}" />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
         {:else}
-          <div class="flex justify-center items-center h-full text-center my-4">
-            <p>
-              File type <strong>{post.file.split(".").pop()}</strong> not
-              supported for preview.
-              <br />
-              Download to view.
-            </p>
+          <div class="border rounded-lg overflow-hidden">
+            <div class="flex justify-center items-center h-full text-center my-4">
+              <p>
+                File type <strong>{post.file.split(".").pop()}</strong> not
+                supported for preview.
+                <br />
+                Download to view.
+              </p>
+            </div>
           </div>
         {/if}
-      </div>
     {/if}
 
     <div class="flex justify-between items-center">

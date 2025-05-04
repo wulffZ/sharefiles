@@ -63,7 +63,7 @@
 
 <main class="flex justify-center items-center flex-col mx-auto mt-4">
   <ul
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 m-2 gap-6"
+    class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 m-2 gap-6"
   >
     {#if loading}
       <div class="flex justify-center items-center col-span-full">
