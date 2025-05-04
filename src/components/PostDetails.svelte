@@ -61,7 +61,22 @@
   }
 
   function download() {
-    window.open(fileUrl, "_blank");
+    fetch(fileUrl)
+      .then(response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = post.file;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch(() => {
+        // fallback: open in new tab if download fails
+        window.open(fileUrl, '_blank');
+      });
   }
 
   async function publicLink() {
