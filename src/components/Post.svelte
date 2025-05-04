@@ -8,16 +8,13 @@
   import { searchQuery } from "$lib/stores/search";
 
   import {
-    ArrowRightOutline,
-    ImageOutline,
     FileOutline,
     FileVideoOutline,
     FileMusicOutline,
     FileCodeOutline,
-    ChevronDownOutline,
     ArchiveOutline,
   } from "flowbite-svelte-icons";
-  import { Badge, Card, Button } from "flowbite-svelte";
+  import { Badge, Card } from "flowbite-svelte";
   import PostDetails from "./PostDetails.svelte";
 
   interface Post {
@@ -29,21 +26,23 @@
     collectionId: string;
   }
 
-  export let post: Post;
-  let isModalOpen = false;
-  let fileType = "";
-  let fileContent = "";
-  let fileUrl = post.file;
-  let displayTag: string;
+  const { post } = $props();
+  let isModalOpen = $state(false);
+  let fileType = $state("");
+  let fileContent = $state("");
+  let fileUrl = $state(post.file);
+  // let displayTag = $state(""); // Removed, but kept for reference
 
   const dispatch = createEventDispatcher<{
     delete: undefined;
   }>();
 
-  $: query = $searchQuery?.toUpperCase() ?? "";
-  $: matchingTags = query
-    ? post.tags.filter((tag) => tag.toUpperCase().includes(query))
-    : [];
+  let query = $derived($searchQuery?.toUpperCase() ?? "");
+  let matchingTags = $derived(
+    query
+      ? post.tags.filter((tag: string) => tag.toUpperCase().includes(query))
+      : []
+  );
 
   onMount(() => {
     const currentPostId = $page.url.searchParams.get("id");
@@ -62,12 +61,12 @@
     dispatch("delete", event.detail);
   }
 
-  $: {
+  $effect(() => {
     determineFileType(post.file, fileUrl).then((result) => {
       fileType = result.fileType;
       if (result.fileContent) fileContent = result.fileContent;
     });
-  }
+  });
 </script>
 
 <Card padding="md">
@@ -99,7 +98,7 @@
           {#if query}
             {@html post.title
               .split(" ")
-              .map((word) =>
+              .map((word: string) =>
                 word.toUpperCase().includes(query)
                   ? `<span class="text-purple-500">${word}</span>`
                   : word
